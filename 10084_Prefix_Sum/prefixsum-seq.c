@@ -9,13 +9,12 @@
 #define MAX_THREAD 4
 uint32_t prefix_sum[MAXN];
 
-struct countData {
+typedef struct countData {
     int left_index;
     int right_index;
     uint32_t *prefixSum;
     uint32_t key;
-};
-typedef countData CountData;
+} CountData;
 
 void* threadCountBlock(void *countdata) {
     CountData blockData = *((CountData*) countdata);
@@ -23,7 +22,7 @@ void* threadCountBlock(void *countdata) {
     uint32_t sum = 0;
     int j = 0;
     for ( int i = blockData.left_index ; i <= blockData.right_index ; i++ ) {
-        sum += encrypt(i, blockData->key);
+        sum += encrypt(i, blockData.key);
         prefixSum[j] = sum;
         j++;
     }
@@ -36,7 +35,7 @@ void* threadCountAllBlock(void *countdata) {
     int j = 0;
     for ( int i = blockData.left_index ; i <= blockData.right_index ; i++ ) {
         // sum += (last block sum)
-        prefixSum[j] += blockData->key;
+        prefixSum[j] += blockData.key;
         j++;
     }
     free(countdata);
@@ -61,10 +60,10 @@ int main() {
             CountData *countdata = (CountData*) malloc(sizeof(CountData));
             countdata -> left_index = i;
             countdata -> right_index = MIN(i + BLOCK - 1, n);   // choose (max_index n) or (next-block - 1)
-            countdata -> prefix_sum = prefix_sum + i;
+            countdata -> prefixSum = prefix_sum + i;
             countdata -> key = key;
             i += BLOCK;
-            pthread_creat(&threadList[count_thread], NULL, threadCountBlock, countdata);
+            pthread_create(&threadList[count_thread], NULL, threadCountBlock, countdata);
             count_thread++;
         }
         for ( int i = 0 ; i < count_thread ; i++ ) {
@@ -75,16 +74,16 @@ int main() {
         count_thread = 0;
         // COUNT ALL BLOCK SUM
         for ( int i = 1 ; i <= n ; ) {
+            uint32_t local = sum;
+            // last block sum
+            sum += prefix_sum[MIN(i + BLOCK - 1, n)];
             CountData *countdata = (CountData*) malloc(sizeof(CountData));
             countdata -> left_index = i;
             countdata -> right_index = MIN(i + BLOCK - 1, n);   // choose (max_index n) or (next-block - 1)
-            countdata -> prefix_sum = prefix_sum + i;
-            countdata -> key = sum;
+            countdata -> prefixSum = prefix_sum + i;
+            countdata -> key = local;
             i += BLOCK;
-
-            // last block sum
-            sum += prefix_sum[MIN(i + BLOCK - 1, n)];
-            pthread_creat(&threadList[count_thread], NULL, threadCountAllBlock, countdata);
+            pthread_create(&threadList[count_thread], NULL, threadCountAllBlock, countdata);
             count_thread++;
         }
         for ( int i = 0 ; i < count_thread ; i++ ) {
