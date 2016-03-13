@@ -74,14 +74,15 @@ int main() {
         count_thread = 0;
         // COUNT ALL BLOCK SUM
         for ( int i = 1 ; i <= n ; ) {
-            uint32_t local = sum;
-            // last block sum
-            sum += prefix_sum[MIN(i + BLOCK - 1, n)];
+            // uint32_t local = sum;
             CountData *countdata = (CountData*) malloc(sizeof(CountData));
             countdata -> left_index = i;
             countdata -> right_index = MIN(i + BLOCK - 1, n);   // choose (max_index n) or (next-block - 1)
             countdata -> prefixSum = prefix_sum + i;
-            countdata -> key = local;
+            countdata -> key = sum;
+            
+            // last block sum
+            sum += prefix_sum[MIN(i + BLOCK - 1, n)];
             i += BLOCK;
             pthread_create(&threadList[count_thread], NULL, threadCountAllBlock, countdata);
             count_thread++;
