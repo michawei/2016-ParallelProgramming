@@ -27,7 +27,7 @@ void* thread_rand_gen(void *matrixdata) {
     MatrixData matrix = *((MatrixData*) matrixdata)
     UINT x = 2;
     UINT n = matrix.N * matrix.N;
-    UINT **ANS = matrix.A;
+    UINT ANS = matrix.A;
     for (int i = 0; i < matrix.N; i++) {
         for (int j = 0; j < matrix.N; j++) {
             x = (x * x + matrix.c + i + j)%n;

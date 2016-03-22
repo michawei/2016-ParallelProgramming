@@ -1,2 +1,2 @@
 all: 
-	gcc hello-pthread.c -o hello -lpthread
+	gcc -std=c99 -O2 queen.c -o queen -lpthread
