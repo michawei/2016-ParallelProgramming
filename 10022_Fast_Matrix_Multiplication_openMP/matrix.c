@@ -2,7 +2,7 @@
  
 void multiply(int N, unsigned long A[][2048], unsigned long B[][2048], unsigned long C[][2048]) {
 	int CHUNK = 8;
-	#pragma omp parallel for schedule(dynamic, CHUNK) reduction(+:sum)
+	#pragma omp parallel for schedule(dynamic, CHUNK)
 	for (int i = 0; i < N; i++) {
 		for (int j = 0; j < N; j++) {
             unsigned long sum = 0;    // overflow, let it go.
