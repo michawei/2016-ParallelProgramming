@@ -53,18 +53,22 @@ int main() {
     vector<int> allcover; 
     for(i=0; i<graph.size(); i++) 
         allcover.push_back(1); 
+#pragma omp parallel for
     for(i=0; i<allcover.size(); i++) { 
-        if(found)
-            break;
+        // if(found)
+        //     break;
         // counter++;
         // cout<<counter<<". ";
         // outfile<<counter<<". "; 
         vector<int> cover=allcover;
         cover[i]=0;
         cover=procedure_1(neighbors,cover);
+#pragma omp critical
+    {
         s=cover_size(cover);
         if(s<min)
-            min=s; 
+            min=s;
+    }
         // if(s<=k) { 
         //     outfile<<"Clique ("<<n-s<<"): "; 
         //     for(j=0; j<cover.size(); j++)
@@ -78,9 +82,12 @@ int main() {
         // } 
         for(j=0; j<n-k; j++) 
             cover=procedure_2(neighbors,cover,j); 
-        s=cover_size(cover); 
+#pragma omp critical
+    {
+        s=cover_size(cover);
         if(s<min)
-            min=s; 
+            min=s;
+    }
         // outfile<<"Clique ("<<n-s<<"): "; 
         // for(j=0; j<cover.size(); j++)
         //     if(cover[j]==0)
@@ -95,6 +102,7 @@ int main() {
     } 
 
     //Pairwise Intersections 
+#pragma omp parallel for
     for(p=0; p<covers.size(); p++) { 
         // if(found)
         //     break;
@@ -109,9 +117,12 @@ int main() {
                 if(covers[p][r]==0 && covers[q][r]==0)
                     cover[r]=0; 
             cover=procedure_1(neighbors,cover); 
-            s=cover_size(cover); 
+#pragma omp critical
+    {
+            s=cover_size(cover);
             if(s<min)
-                min=s; 
+                min=s;
+    }
             // if(s<=k) { 
             //     outfile<<"Clique ("<<n-s<<"): "; 
             //     for(j=0; j<cover.size(); j++)
@@ -124,9 +135,12 @@ int main() {
             // } 
             for(j=0; j<k; j++) 
                 cover=procedure_2(neighbors,cover,j); 
-            s=cover_size(cover); 
+#pragma omp critical
+    {
+            s=cover_size(cover);
             if(s<min)
-                min=s; 
+                min=s;
+    }
             // outfile<<"Clique ("<<n-s<<"): "; 
             // for(j=0; j<cover.size(); j++)
             //     if(cover[j]==0)
