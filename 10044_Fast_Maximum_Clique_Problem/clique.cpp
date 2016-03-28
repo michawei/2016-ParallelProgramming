@@ -1,7 +1,9 @@
 #include <iostream> 
 #include <fstream> 
 #include <string> 
-#include <vector> 
+#include <vector>
+#include <omp.h>
+#define MAX_THREADS 2
 using namespace std;
 bool removable(vector<int> neighbor, vector<int> cover); 
 int max_removable(vector<vector<int> > neighbors, vector<int> cover); 
@@ -14,12 +16,15 @@ ifstream infile ("input");
 int main() { 
     // Read Graph (note we work with the complement of the input graph) 
     // cout<<"Clique Algorithm."<<endl; 
-    int n, i, j, k, K, p, q, r, s, min, edge, counter=0; 
+    omp_set_num_threads(MAX_THREADS);
+    //int n, i, j, k, K, p, q, r, s, min, edge, counter=0; 
+    int min, n, edge;
+    int k = 1;
     infile >> n; 
     vector< vector<int> > graph; 
-    for(i=0; i<n; i++) { 
+    for(int i=0; i<n; i++) { 
         vector<int> row; 
-        for(j=0; j<n; j++) { 
+        for(int j=0; j<n; j++) { 
             infile>>edge; 
             if(edge==0)
                 row.push_back(1); 
@@ -31,9 +36,9 @@ int main() {
 
     // Find Neighbors 
     vector<vector<int> > neighbors; 
-    for(i=0; i<graph.size(); i++) { 
+    for(int i=0; i<graph.size(); i++) { 
         vector<int> neighbor; 
-        for(j=0; j<graph[i].size(); j++) 
+        for(int j=0; j<graph[i].size(); j++) 
             if(graph[i][j]==1)
                 neighbor.push_back(j); 
         neighbors.push_back(neighbor); 
@@ -51,10 +56,10 @@ int main() {
     min=n+1; 
     vector<vector<int> > covers; 
     vector<int> allcover; 
-    for(i=0; i<graph.size(); i++) 
+    for(int i=0; i<graph.size(); i++) 
         allcover.push_back(1); 
 #pragma omp parallel for
-    for(i=0; i<allcover.size(); i++) { 
+    for(int i=0; i<allcover.size(); i++) { 
         // if(found)
         //     break;
         // counter++;
@@ -63,12 +68,10 @@ int main() {
         vector<int> cover=allcover;
         cover[i]=0;
         cover=procedure_1(neighbors,cover);
-#pragma omp critical
-    {
-        s=cover_size(cover);
+        int s=cover_size(cover);
+
         if(s<min)
             min=s;
-    }
         // if(s<=k) { 
         //     outfile<<"Clique ("<<n-s<<"): "; 
         //     for(j=0; j<cover.size(); j++)
@@ -80,14 +83,13 @@ int main() {
         //     found=true; 
         //     break; 
         // } 
-        for(j=0; j<n-k; j++) 
+        for(int j=0; j<n-k; j++) 
             cover=procedure_2(neighbors,cover,j); 
-#pragma omp critical
-    {
         s=cover_size(cover);
+
         if(s<min)
             min=s;
-    }
+
         // outfile<<"Clique ("<<n-s<<"): "; 
         // for(j=0; j<cover.size(); j++)
         //     if(cover[j]==0)
@@ -103,26 +105,24 @@ int main() {
 
     //Pairwise Intersections 
 #pragma omp parallel for
-    for(p=0; p<covers.size(); p++) { 
+    for(int p=0; p<covers.size(); p++) { 
         // if(found)
         //     break;
-        for(q=p+1; q<covers.size(); q++) { 
+        for(int q=p+1; q<covers.size(); q++) { 
             // if(found)
             //     break; 
             // counter++;
             // cout<<counter<<". ";
             // outfile<<counter<<". "; 
-            vector<int> cover=allcover; 
-            for(r=0; r<cover.size(); r++) 
+            vector<int> cover=allcover;
+            for(int r=0; r<cover.size(); r++) 
                 if(covers[p][r]==0 && covers[q][r]==0)
                     cover[r]=0; 
             cover=procedure_1(neighbors,cover); 
-#pragma omp critical
-    {
-            s=cover_size(cover);
+            int s=cover_size(cover);
+
             if(s<min)
                 min=s;
-    }
             // if(s<=k) { 
             //     outfile<<"Clique ("<<n-s<<"): "; 
             //     for(j=0; j<cover.size(); j++)
@@ -133,14 +133,12 @@ int main() {
             //     found=true; 
             //     break; 
             // } 
-            for(j=0; j<k; j++) 
+            for(int j=0; j<k; j++) 
                 cover=procedure_2(neighbors,cover,j); 
-#pragma omp critical
-    {
             s=cover_size(cover);
+
             if(s<min)
                 min=s;
-    }
             // outfile<<"Clique ("<<n-s<<"): "; 
             // for(j=0; j<cover.size(); j++)
             //     if(cover[j]==0)
