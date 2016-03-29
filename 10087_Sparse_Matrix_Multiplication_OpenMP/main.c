@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include <inttypes.h>
 #include <omp.h>
-#define MAX_THREADS 8
+#define MAX_THREADS 16
 
 static inline uint32_t rotate_left(uint32_t x, uint32_t n) {
     return  (x << n) | (x >> (32-n));
@@ -25,11 +25,11 @@ int main() {
         scanf("%d %d %d", &x, &y, &v), B[x][y] = v;
  
     uint32_t hash = 0;
-#pragma omp parallel for reduction(+:hash)
+    int CHUNK = 8;
+#pragma omp parallel for schedule(dynamic, CHUNK) reduction(+:hash)
     for (int i = 0; i < N; i++) {
         for (int j = 0; j < R; j++) {
             uint32_t sum = 0;
-#pragma omp parallel for reduction(+:sum)
             for (int k = 0; k < M; k++)
                 sum += A[i][k] * B[k][j];
             if (sum)
