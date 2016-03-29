@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <pthread.h>
  
-#define DEBUG 1
-#define MAX_THREAD 2
+//#define DEBUG 1
+#define MAX_THREAD 8
 #define UINT unsigned long
 #define MAXN 2048
 void rand_gen(UINT c, int N, UINT A[][MAXN]) {
