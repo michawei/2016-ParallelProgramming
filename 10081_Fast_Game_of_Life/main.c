@@ -1,12 +1,20 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <assert.h>
 #include <omp.h>
 #define MAX_N 2048
 
 int N, M;
 int GameBoard[2][MAX_N][MAX_N];
 
-int main() {
+int main(int argc, char *argv[]) {
+
+	assert(argc == 4);
+	omp_set_num_threads(atoi(argv[1]));
+
+	int policy = atoi(argv[2]);
+	int chunk = atoi(argv[3]); omp_set_schedule(policy, chunk);
+
 	scanf("%d %d", &N, &M);
 	for (int i = 1; i <= N; i++) {
 		char line[N+1];
@@ -20,7 +28,7 @@ int main() {
 
 	int flag = 0;
 	for (int num = 0 ; num < M ; num++ ) {
-#pragma omp parallel for
+#pragma omp parallel for schedule(runtime)
 		for (int i = 1; i <= N; i++) {
 			for (int j = 1; j <= N; j++) {
 				int neighbor = GameBoard[flag][i-1][j-1] + GameBoard[flag][i][j-1] + GameBoard[flag][i+1][j-1] + GameBoard[flag][i-1][j] + GameBoard[flag][i+1][j] + GameBoard[flag][i-1][j+1] + GameBoard[flag][i][j+1] + GameBoard[flag][i+1][j+1];
