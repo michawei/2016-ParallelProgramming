@@ -52,9 +52,7 @@ int main(int argc, char *argv[])
   assert(status == CL_SUCCESS);
 
   /* buildprogram */
-  status = 
-    clBuildProgram(program, GPU_id_got, GPU, NULL, NULL, 
-		   NULL);
+  status = clBuildProgram(program, GPU_id_got, GPU, NULL, NULL, NULL);
   assert(status == CL_SUCCESS);
   printf("Build program completes\n");
 
@@ -119,8 +117,10 @@ int main(int argc, char *argv[])
 		      0, NULL, NULL);
   printf("Kernel execution completes.\n");
   /* checkandfree */
-  for (int i = 0; i < N; i++)
+  for (int i = 0; i < N; i++){
     assert(A[i] + B[i] == C[i]);
+    printf("%d %d %d\n", A[i], B[i], C[i]);
+  }
 
   free(A);			/* host memory */
   free(B);

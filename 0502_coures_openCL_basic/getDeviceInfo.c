@@ -21,19 +21,19 @@ int main(int argc, char *argv[])
     clGetPlatformInfo(platform_id[i], CL_PLATFORM_NAME, 
 		      MAXB, buffer, &length);
     buffer[length] = '\0';
-    printf("Platform name %s\n", buffer);
+    printf("%s\n", buffer);
     clGetPlatformInfo(platform_id[i], CL_PLATFORM_VENDOR, 
 		      MAXB, buffer, &length);
     buffer[length] = '\0';
-    printf("Platform vendor %s\n", buffer);
+    printf("%s\n", buffer);
     clGetPlatformInfo(platform_id[i], CL_PLATFORM_VERSION, 
 		      MAXB, buffer, &length);
     buffer[length] = '\0';
-    printf("OpenCL version %s\n", buffer);
+    printf("%s\n", buffer);
     clGetPlatformInfo(platform_id[i], CL_PLATFORM_PROFILE, 
 		      MAXB, buffer, &length);
     buffer[length] = '\0';
-    printf("Platform profile %s\n", buffer);
+    printf("%s\n", buffer);
     /* getDeviceID */
     cl_device_id devices[MAXDEVICE];
     cl_uint device_id_got;
@@ -49,20 +49,33 @@ int main(int argc, char *argv[])
     /* getDeviceInfo */
     for (int j = 0; j < device_id_got; j++) {
       clGetDeviceInfo(devices[j], CL_DEVICE_NAME, MAXB, buffer, &length);
-      buffer[length] = '\0';
-      printf("Device name %s\n", buffer);
-      cl_ulong number;
-      clGetDeviceInfo(devices[j], CL_DEVICE_GLOBAL_MEM_SIZE, sizeof(cl_ulong), &number, NULL);
-      printf("Global memory size %lld\n", (long long)number);
+      //buffer[length] = '\0';
+      printf("%s\n", buffer);
 
-      clGetDeviceInfo(devices[j], CL_DEVICE_LOCAL_MEM_SIZE, sizeof(cl_ulong), &number, NULL);
-      printf("Local memory size %lld\n", (long long)number);
+      clGetDeviceInfo(devices[j], CL_DEVICE_PROFILE, MAXB, buffer, &length);
+      //buffer[length] = '\0';
+      printf("%s\n", buffer);
 
-      clGetDeviceInfo(devices[j], CL_DEVICE_MAX_COMPUTE_UNITS, sizeof(cl_ulong), &number, NULL);
-      printf("# of compute units %lld\n", (long long)number);
+      clGetDeviceInfo(devices[j], CL_DEVICE_NAME, MAXB, buffer, &length);
+      //buffer[length] = '\0';
+      printf("%s\n", buffer);
 
-      clGetDeviceInfo(devices[j], CL_DEVICE_MAX_WORK_GROUP_SIZE, sizeof(cl_ulong), &number, NULL);
-      printf("max # of work items in a work group %lld\n", (long long)number);
+      clGetDeviceInfo(devices[j], CL_DEVICE_PROFILE, MAXB, buffer, &length);
+      //buffer[length] = '\0';
+      printf("%s\n", buffer);
+
+      // cl_ulong number;
+      // clGetDeviceInfo(devices[j], CL_DEVICE_GLOBAL_MEM_SIZE, sizeof(cl_ulong), &number, NULL);
+      // printf("Global memory size %lld\n", (long long)number);
+
+      // clGetDeviceInfo(devices[j], CL_DEVICE_LOCAL_MEM_SIZE, sizeof(cl_ulong), &number, NULL);
+      // printf("Local memory size %lld\n", (long long)number);
+
+      // clGetDeviceInfo(devices[j], CL_DEVICE_MAX_COMPUTE_UNITS, sizeof(cl_ulong), &number, NULL);
+      // printf("# of compute units %lld\n", (long long)number);
+
+      // clGetDeviceInfo(devices[j], CL_DEVICE_MAX_WORK_GROUP_SIZE, sizeof(cl_ulong), &number, NULL);
+      // printf("max # of work items in a work group %lld\n", (long long)number);
     }
     /* end */
   }
