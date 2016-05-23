@@ -187,9 +187,10 @@ int main(int argc, char *argv[])
 	//assert(status == CL_SUCCESS);
 	//printf("Specify the shape of the domain completes.\n");
 	/* getcvector */
-	clEnqueueReadBuffer(commandQueue, bufferC, CL_TRUE, 
+	cl_int a = clEnqueueReadBuffer(commandQueue, bufferC, CL_TRUE, 
 			  0, length * sizeof(cl_uint), C, 
 			  0, NULL, NULL);
+	printf("%d\n", a);
 	//printf("Kernel execution completes.\n");
 	/* checkandfree */
 	// for (int i = 0; i < N; i++){

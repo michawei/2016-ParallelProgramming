@@ -15,7 +15,7 @@ matrixMul(__global int* A,
 			unsigned int elementB = B[k * wN + y];
 			value += elementA * elementB;
 		}
-	
+		
 		C[index * wN + y] = value;
 	}
 }
